@@ -14,7 +14,8 @@
 		"cors": "^2.8.5",
 		"dotenv": "^8.6.0",
 		"express": "^4.17.1",
-		"mocha": "^8.4.0"
+		"mocha": "^8.4.0",
+		"mongoose": "^6.0.13"
 	},
 	"repository": {
 		"type": "git",
