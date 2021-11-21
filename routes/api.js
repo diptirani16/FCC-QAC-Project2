@@ -1,11 +1,13 @@
 'use strict';
-
 const Server = require('../database/server');
-Server.connection(process.env.MONGO).then(() => {
-  console.log('Database connected!')
-}).catch((err) => {
-  console.log(err);
-})
+
+Server.connection(process.env.MONGO)
+  .then(() => {
+    console.log('Database connected!')
+  })
+  .catch((err) => {
+    console.log(err);
+  })
 
 const updatedIssueObject = (data) => {
   let output = {};
@@ -28,6 +30,13 @@ const updatedIssueObject = (data) => {
 
   output['updated_on'] = new Date().toISOString();
   return output;
+}
+
+const missingFields = ({issue_text, issue_title, created_by})=>{
+  if (!issue_title || !issue_text || !created_by || issue_title === '' || issue_text === '' || created_by === '') {
+    return true;
+  }
+  return false;
 }
 
 module.exports = function (app) {
@@ -59,7 +68,7 @@ module.exports = function (app) {
       let project = req.params.project;
       let { issue_title, issue_text, created_by, assigned_to, status_text } = req.body;
 
-      if (!issue_title || !issue_text || !created_by || issue_title === '' || issue_text === '' || created_by === '') {
+      if(missingFields(req.body)) {
         return res.json({ error: 'required field(s) missing' });
       }
 
@@ -76,7 +85,7 @@ module.exports = function (app) {
 
       Server.addIssue({issue_title, issue_text, created_on, updated_on, created_by, assigned_to, open, status_text, project})
         .then((newData) => {
-          return res.json(newData)
+          return res.json(newData);
         })
         .catch(() => {
           return res.send("Error !!");
@@ -93,11 +102,11 @@ module.exports = function (app) {
       if(Object.keys(req.body).length <= 1) {
         return res.json({ 
           error: 'no update field(s) sent',
-          '_id': idToDelete
+          '_id': idToUpdate
         })
       }
 
-      const updatedIssue = updatedIssueObject(req.body);
+      let updatedIssue = updatedIssueObject(req.body);
 
       Server.updateIssue(idToUpdate, updatedIssue)
         .then(() => {
@@ -116,7 +125,6 @@ module.exports = function (app) {
     
     .delete(function (req, res){
       let idToDelete = req.body['_id'];
-
       if(!idToDelete || idToDelete === ""){
         return res.json({ error: 'missing_id'});
       }

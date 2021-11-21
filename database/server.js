@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { string } = require('yargs');
 
 const connection = async (url) => {
     if(url) {
@@ -45,19 +44,20 @@ const findOne = async (id) => {
 
 const findIssue = async (obj) => {
     const issue = await Issue.find(obj, '-project -__v')
+    return issue;
 }
 
-const updateIssue = async (id, newObj) => {
+const updateIssue = async (id, updatedIssue) => {
     const issueToUpdate = await Issue.findById(id);
-    for(let property in newObj) {
-        issueToUpdate[property] = newObj[property];
+    for(let property in updatedIssue) {
+        issueToUpdate[property] = updatedIssue[property];
     }
     await issueToUpdate.save();
 }
 
 const deleteIssue = async (id) => {
-    const issueToDelete = await Issue.findById(id);
-    if(issueToUpdate) {
+    let issueToDelete = await Issue.findById(id);
+    if(issueToDelete) {
         await Issue.findByIdAndDelete(id).exec();
     }
     else {
