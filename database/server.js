@@ -1,19 +1,13 @@
 const mongoose = require('mongoose');
 
-const connection = async (url) => {
-    if(url) {
-        mongoose.connect(url)
-            .then(() => {
-                return Promise.resolve();
-            })
-            .catch((err) => {
-                return Promise.reject(err);
-            })
+mongoose.connect(process.env.DB, (err) => {
+    if(err) {
+        console.log('Connection to database failed!');
     }
     else {
-        return Promise.reject('No url provided');
+        console.log('Connection to database successful!');
     }
-}
+})
 
 const issueSchema = new mongoose.Schema({
     issue_title: String,
@@ -25,8 +19,6 @@ const issueSchema = new mongoose.Schema({
     open: Boolean,
     status_text: String,
     project: String
-}, {
-    versionKey: false
 });
 
 const Issue = mongoose.model('Issue', issueSchema);
@@ -66,7 +58,6 @@ const deleteIssue = async (id) => {
 }
 
 module.exports = {
-    connection,
     addIssue,
     findIssue,
     updateIssue,

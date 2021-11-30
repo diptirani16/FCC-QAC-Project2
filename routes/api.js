@@ -1,13 +1,6 @@
 'use strict';
 const Server = require('../database/server');
 
-Server.connection(process.env.MONGO)
-  .then(() => {
-    console.log('Database connected!')
-  })
-  .catch((err) => {
-    console.log(err);
-  })
 
 const updatedIssueObject = (data) => {
   let output = {};
@@ -96,7 +89,7 @@ module.exports = function (app) {
       let idToUpdate = req.body['_id'];
       
       if(!idToUpdate || idToUpdate === "") {
-        return res.json({ error: 'missing_id' });
+        return res.json({ error: 'missing _id' });
       }
 
       if(Object.keys(req.body).length <= 1) {
@@ -126,7 +119,7 @@ module.exports = function (app) {
     .delete(function (req, res){
       let idToDelete = req.body['_id'];
       if(!idToDelete || idToDelete === ""){
-        return res.json({ error: 'missing_id'});
+        return res.json({ error: 'missing _id'});
       }
 
       Server.deleteIssue(idToDelete)
